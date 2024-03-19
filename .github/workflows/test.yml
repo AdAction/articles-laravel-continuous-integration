@@ -18,15 +18,10 @@ jobs:
   build:
     uses: ./.github/workflows/build.yml
     secrets: inherit
-    concurrency:
-      group: test-build
-      cancel-in-progress: true
 
   php-tests:
     runs-on: ubuntu-latest-m
     needs: build
-    concurrency:
-      group: test
 
     steps:
     - name: Checkout code
@@ -54,8 +49,6 @@ jobs:
   js-tests:
     runs-on: ubuntu-latest-m
     needs: build
-    concurrency:
-      group: test
 
     steps:
     - name: Checkout code
