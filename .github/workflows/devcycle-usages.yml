@@ -1,0 +1,23 @@
+name: DevCycle Usages
+
+on:
+  push:
+    branches: [main]
+
+env:
+  DVC_PROJECT_KEY: "test_project_key"
+
+jobs:
+  dvc-code-usages:
+    runs-on: ubuntu-latest
+    name: DevCycle Feature Flag Code Usages
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: DevCycleHQ/feature-flag-code-usage-action@v1.1.2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          client-id: ${{ secrets.DVC_CLIENT_ID }}
+          client-secret: ${{ secrets.DVC_CLIENT_SECRET }}
+          project-key: ${{ env.DVC_PROJECT_KEY }}
