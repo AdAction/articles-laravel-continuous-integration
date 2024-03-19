@@ -10,16 +10,8 @@ env:
   PHP_VERSION: "8.2"
 
 jobs:
-  build:
-    uses: ./.github/workflows/build.yml
-    secrets: inherit
-    concurrency:
-      group: lint-build
-      cancel-in-progress: true
-
   php-linting:
     runs-on: ubuntu-latest
-    needs: build
 
     steps:
       - name: Checkout
@@ -47,7 +39,6 @@ jobs:
 
   node-linting:
     runs-on: ubuntu-latest
-    needs: build
 
     steps:
       - name: Checkout
