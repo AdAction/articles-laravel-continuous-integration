@@ -57,4 +57,4 @@ jobs:
         run: "npm run prettier"
 
       - name: Run ESLint
-        run: npx eslint . --ext .vue,.js
+        run: npm run lint
