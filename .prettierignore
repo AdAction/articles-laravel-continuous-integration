@@ -1,0 +1,78 @@
+# Laravel specific
+/vendor/
+/node_modules/
+/public/hot
+/public/storage
+/public/vendor/
+/storage/*.key
+/storage/framework/cache/
+/storage/framework/sessions/
+/storage/framework/testing/
+/storage/framework/views/
+/bootstrap/cache/
+.env
+.env.backup
+.env.example
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+
+# PHPStorm or IntelliJ
+.idea/
+
+# VS Code
+.vscode/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Logs
+*.log
+
+# Other tools
+*.swp
+*.swo
+*.bak
+*.cache
+*.DS_Store
+*.thumbnails
+*.tmp
+*.tmp.*
+*.sublime-*
+.sftp-config.json
+
+# Compiled files
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Directories
+__pycache__/
+*.egg-info/
+.Python
+
+# Packages
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Large media files
+*.mp4
+*.tiff
+*.avi
+*.flv
+*.mov
+*.wmv
