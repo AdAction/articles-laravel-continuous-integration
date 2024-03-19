@@ -1,0 +1,43 @@
+name: Build
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  workflow_call:
+  pull_request:
+
+env:
+  COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
+  EXTENSIONS: pcntl, bcmath, zip, gd, sodium, :php-psr
+  PHP_VERSION: "8.2"
+  NODE_VERSION: 20
+
+jobs:
+  build:
+    runs-on: ubuntu-latest-m
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ env.PHP_VERSION }}
+        extensions: ${{ env.EXTENSIONS }}
+        tools: composer, pecl
+        coverage: xdebug
+
+    - name: Install Deps
+      uses: "ramsey/composer-install@v3"
+
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: "npm"
+
+    - name: Build App
+      run: npm ci
