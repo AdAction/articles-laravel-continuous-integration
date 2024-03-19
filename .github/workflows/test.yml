@@ -15,8 +15,18 @@ env:
   NODE_VERSION: 20
 
 jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
+    concurrency:
+      group: test-build
+      cancel-in-progress: true
+
   php-tests:
     runs-on: ubuntu-latest-m
+    needs: build
+    concurrency:
+      group: test
 
     steps:
     - name: Checkout code
@@ -42,7 +52,10 @@ jobs:
       run: php artisan test --ci --coverage-clover=coverage.xml --log-junit=test-report.xml
 
   js-tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-m
+    needs: build
+    concurrency:
+      group: test
 
     steps:
     - name: Checkout code
