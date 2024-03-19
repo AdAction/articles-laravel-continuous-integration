@@ -1,1 +1,6 @@
 /vendor/
+/node_modules/
+/node_modules/*
+/public/build/assets/app-D2jpX1vH.js
+/public/build/assets/app-l0sNRNKZ.js
+/public/build/manifest.json
