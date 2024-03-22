@@ -6,6 +6,10 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   upload-release:
     runs-on: ubuntu-latest
@@ -17,6 +21,13 @@ jobs:
         START_TIME=$(date +%s) 
         echo "START_TIME=$START_TIME" >> $GITHUB_ENV
 
+    - name: configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        role-to-assume: arn:aws:iam::172122050326:role/PublicGitHubRepoOIDCRole
+        role-session-name: DeployGitHubActions
+        aws-region: us-east-2
+
     - name: Checkout code
       uses: actions/checkout@v4
 
@@ -26,8 +37,6 @@ jobs:
 
     - name: Copy file to S3 with metadata
       env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.PUBLIC_REPO_AWS_S3_ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.PUBLIC_REPO_AWS_S3_SECRET_KEY }}
         AWS_REGION: us-east-2
       run: |
-        aws s3 cp --metadata github-sha=${{ github.sha }},start-time=${START_TIME} ./laravel-app-latest.zip s3://laravel-app-build-bucket-103902666/artifact/laravel-app-latest.zip
+        aws s3 cp --metadata github-sha=${{ github.sha }},start-time=${START_TIME} ./laravel-app-latest.zip s3://articles-laravel-continuous-integration/laravel-app-latest.zip
