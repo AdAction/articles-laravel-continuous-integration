@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 env:
-  DVC_PROJECT_KEY: "test_project_key"
+  DVC_PROJECT_KEY: "articles-laravel-continuous-integration"
 
 jobs:
   dvc-code-usages:
@@ -17,7 +17,7 @@ jobs:
           fetch-depth: 0
       - uses: DevCycleHQ/feature-flag-code-usage-action@v1.1.2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          client-id: ${{ secrets.DVC_CLIENT_ID }}
-          client-secret: ${{ secrets.DVC_CLIENT_SECRET }}
-          project-key: ${{ env.DVC_PROJECT_KEY }}
+          github-token: ${{ secrets.PUBLIC_REPO_BOT_GITHUB_TOKEN }}
+          client-id: ${{ secrets.PUBLIC_DVC_CLIENT_ID }}
+          client-secret: ${{ secrets.PUBLIC_DVC_CLIENT_SECRET }}
+          project-key: ${{ env.PUBLIC_DVC_PROJECT_KEY }}

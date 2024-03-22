@@ -15,7 +15,7 @@ env:
   NODE_VERSION: 20
 
 jobs:
-  build:
+  build-lint-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -42,98 +42,28 @@ jobs:
     - name: Build App
       run: npm ci
 
-  php-linting:
-    runs-on: ubuntu-latest
-    needs: build
+    - name: Check Code Styles
+      run: "vendor/bin/pint --test"
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    - name: Setup problem matchers for PHP
+      run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ env.PHP_VERSION }}
-          extensions: ${{ env.EXTENSIONS }}
-          tools: composer, pecl
-          coverage: xdebug
+    - name: Run PHPStan
+      run: vendor/bin/phpstan analyse --no-progress
 
-      - name: Install Deps
-        uses: "ramsey/composer-install@v3"
+    - name: Initialize Project
+      run: |
+        cp .env.ci .env
+        composer app:init
 
-      - name: Check Code Styles
-        run: "vendor/bin/pint --test"
+    - name: Run PHP Unit Tests
+      run: php artisan test --ci --coverage-clover=coverage.xml --log-junit=test-report.xml
 
-      - name: Setup problem matchers for PHP
-        run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+    - name: Check Code Styles
+      run: "npm run prettier"
 
-      - name: Run PHPStan
-        run: vendor/bin/phpstan analyse --no-progress
-  php-tests:
-    runs-on: ubuntu-latest-m
-    needs: php-linting
+    - name: Run ESLint
+      run: npm run lint
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ env.PHP_VERSION }}
-          extensions: ${{ env.EXTENSIONS }}
-          tools: composer, pecl
-          coverage: xdebug
-
-      - name: Install Deps
-        uses: "ramsey/composer-install@v3"
-
-      - name: Initialize Project
-        run: |
-          cp .env.ci .env
-          composer app:init
-
-      - name: Run PHP Unit Tests
-        run: php artisan test --ci --coverage-clover=coverage.xml --log-junit=test-report.xml
-
-  node-linting:
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
-
-      - name: Build App
-        run: npm ci
-
-      - name: Check Code Styles
-        run: "npm run prettier"
-
-      - name: Run ESLint
-        run: npm run lint
-  node-tests:
-    runs-on: ubuntu-latest-m
-    needs: node-linting
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
-
-      - name: Build App
-        run: npm ci
-
-      - name: Run CDK Tests
-        run: npm test
+    - name: Run CDK Tests
+      run: npm test
