@@ -26,9 +26,6 @@ jobs:
           npm install -g @semantic-release/changelog
           npm install -g @semantic-release/git
 
-      - name: Install Deps
-        uses: "ramsey/composer-install@v3"
-
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_BOT_GITHUB_TOKEN }}
