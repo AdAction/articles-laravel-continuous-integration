@@ -54,7 +54,8 @@ jobs:
     - name: Initialize Project
       run: |
         cp .env.example .env
-        composer init
+        php artisan key:generate
+        php artisan migrate --seed
 
     - name: Run PHP Unit Tests
       run: php artisan test --ci --coverage-clover=coverage.xml --log-junit=test-report.xml
