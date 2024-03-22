@@ -15,8 +15,22 @@ env:
   NODE_VERSION: 20
 
 jobs:
-  build:
-    runs-on: ubuntu-latest-m
+  build-lint-and-test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql
+
+        env:
+          MYSQL_DATABASE: articles-laravel-ci
+          MYSQL_USER: exampleuser
+          MYSQL_PASSWORD: examplepassword
+          MYSQL_ROOT_PASSWORD: examplepassword
+
+        ports:
+          - 33306:3306
+
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
     - name: Checkout code
@@ -41,3 +55,30 @@ jobs:
 
     - name: Build App
       run: npm ci
+
+    - name: Check Code Styles
+      run: "vendor/bin/pint --test"
+
+    - name: Setup problem matchers for PHP
+      run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+
+    - name: Run PHPStan
+      run: vendor/bin/phpstan analyse --no-progress
+
+    - name: Initialize Project
+      run: |
+        cp .env.example .env
+        php artisan key:generate
+        php artisan migrate --seed
+
+    - name: Run PHP Unit Tests
+      run: php artisan test
+
+    - name: Check Code Styles
+      run: "npm run prettier"
+
+    - name: Run ESLint
+      run: npm run lint
+
+    - name: Run CDK Tests
+      run: npm test
