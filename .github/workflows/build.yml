@@ -72,7 +72,7 @@ jobs:
         php artisan migrate --seed
 
     - name: Run PHP Unit Tests
-      run: php artisan test --ci --coverage-clover=coverage.xml --log-junit=test-report.xml
+      run: php artisan test
 
     - name: Check Code Styles
       run: "npm run prettier"
